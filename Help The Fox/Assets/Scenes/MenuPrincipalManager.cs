@@ -7,4 +7,10 @@ public class MenuPrincipalManager : MonoBehaviour
     {
        SceneManager.LoadScene(1);
     }
+
+    public void SairJogo()
+    {
+        Debug.Log("Sair do jogo");
+        Application.Quit();
+    }
 }
