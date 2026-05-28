@@ -11,5 +11,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SalaInicial.unity
     guid: d6e406840984fbd4f8148f42b5bc72da
+  - enabled: 1
+    path: Assets/Scenes/PC do Fafa.unity
+    guid: 9becff8fc4aa78f47924ffc413cc3546
+  - enabled: 1
+    path: Assets/Scenes/VictoryScene.unity
+    guid: 1d75ea2ad96342f4eba6d8d06e5e18ac
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
