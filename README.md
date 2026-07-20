@@ -29,11 +29,11 @@ Ajudar a raposa Lola a recuperar seu notebook e resumos trancados por seu amigo 
 Atualmente, a versão beta possui:
 
 * Tela inicial
-* Sala inicial
+* Sala inicial (falta adicionar paredes e portas)
 * Notebook do Fafa
 * Tela de vitória
-* Corredor principal
-* Quadro de avisos com slide puzzle 
+* animações da lola
+* andar com a lola
 
 
 
@@ -44,9 +44,6 @@ Atualmente, a versão beta possui:
 3. Spawn na sala principal
 4. Ida ao corredor
 5. Resolução do slide puzzle no corredor
-
-> O beta atualmente termina aqui.
- 
 6. conclui o puzzle de reorganizar a sala
 7. conclui o puzzle de robo e morse
 8. acha tabela de morse na sala física e decodifica o morse do robo
@@ -85,7 +82,7 @@ Ao entrar na sala:
 O jogador encontra na sala física:
 
 * uma folha aparentemente em branco;
-* uma caneta/lanterna de luz negra.
+* uma caneta de luz negra.
 
 Ao usar a luz negra:
 
