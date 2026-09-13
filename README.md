@@ -1,18 +1,16 @@
-# 🦊 Help the Fox Remake — Beta
-Versão: 2026.1
+# Help The Fox - 2026.2
 
 Organização: Insper Code 
 
 Evento: Semana Transforme
 
-
-Esse projeto foi desenvolvido em um curto período de tempo após diversos atrasos e problemas de organização da coordenação anterior. Mesmo com apenas uma semana efetiva de desenvolvimento, conseguimos estruturar a base do jogo. 
+correção e upgrade de sua versão anterior, o antigo README ainda está disponível em antiquo.md, será útil em nossos trabalhos.
 
 
 
 ## Descrição
 
-Help the Fox é uma experiência única de Escape Room híbrido (físico e digital), desenvolvida por alunos do Insper em parceria com o Escape 60. A proposta mistura lógica, enigmas físicos, programação com FPGA, e um jogo virtual feito na engine Godot.
+Help the Fox é uma experiência única de Escape Room híbrido (físico e digital), desenvolvida por alunos do Insper em parceria com o Escape 60. A proposta mistura lógica, enigmas físicos, interações com ambiente, e um jogo virtual feito com Unity Engine.
 
 Durante a Semana Transforme, equipes com 3 a 4 jogadores têm 25 minutos para resolver uma sequência de enigmas que envolvem objetos escondidos fisicamente na sala 411 do prédio P2 e interações no mundo digital para libertar a raposa Lola, a protagonista da história.
 
@@ -20,20 +18,13 @@ Durante a Semana Transforme, equipes com 3 a 4 jogadores têm 25 minutos para re
 
 ## Objetivo
 
-Ajudar a raposa Lola a recuperar seu notebook e resumos trancados por seu amigo troll, Fabrício Farias (Fafa), antes que ela perca a prova final e fique de DP!
+Ajudar a raposa Lola a recuperar seu notebook e resumos trancados por seu amigo, Fabrício Farias (Fafa), antes que ela perca a prova final e fique de DP passando por seus desafios!
 
 
 
 # Conteúdo Disponível no Beta
 
-Atualmente, a versão beta possui:
-
-* Tela inicial
-* Sala inicial (falta adicionar paredes e portas)
-* Notebook do Fafa
-* Tela de vitória
-* animações da lola
-* andar com a lola
+verifique o antiquo.md
 
 
 
@@ -59,25 +50,19 @@ Atualmente, a versão beta possui:
 
 # Puzzles Planejados
 
-## Reorganizar Sala
+## Reorganizar Sala (1 Letra)
 
-O jogador deve arrumar os objetos da sala até que, pela perspectiva correta, eles formem uma letra. 
-
-
-
-## Robô e Código Morse
-
-Ao entrar na sala:
-
-* a música ambiente para;
-* interagindo com o robô, uma música começa;
-* o jogador deve clicar na bateria 3 vezes no ritmo correto;
-* ao completar, o robô revela um código morse. 
-* os jogadores devem usar a tabela física de morse e decodificar a letra
+O jogador deve arrumar os objetos da sala até que, pela perspectiva correta, eles formem uma letra semelhante a organização da sala 411. 
 
 
 
-## Puzzle da Luz Negra
+## Notebook e Código Morse (1 Letra)
+
+No computador, Fafa costuma esquecer sua senha e deixa uma música em Morse para lembrar sua senha
+
+
+
+## Puzzle da Luz Negra e Lab Invisível (2 Letras)
 
 O jogador encontra na sala física:
 
@@ -87,8 +72,14 @@ O jogador encontra na sala física:
 Ao usar a luz negra:
 
 * um mapa oculto aparece;
-* a sala digital possui água no chão, fazendo Lola deslizar até obstáculos;
-* seguindo o mapa corretamente, o jogador encontra um post-it com as letras finais. 
+* a sala digital está escura e o mapa revela o labirinto que é a sala (ela está muito desorganizada);
+* seguindo o mapa corretamente, o jogador encontra um post-it com 2 letras. 
+
+## Organizar as letras nos livros (2 Letras)
+
+* Fafa manda a Lola organizar os livros numa ordem definida
+* Os números dos livros revelam um código
+* O código entrega 2 letras
 
 
 
@@ -104,4 +95,4 @@ Ao inserir a senha no notebook do Fafa, o jogador conclui o jogo e acessa a tela
 
 # Equipe
 
-Matteo Magnni Rosso, Judite Rangel de Mello e Gabriel Moreira Alves da Silva
+Lucas Domingues, Thiago Araújo, Gabriel Moreira, Guilherme Vieira e Heitor Donato
