@@ -22,13 +22,13 @@ Ajudar a raposa Lola a recuperar seu notebook e resumos trancados por seu amigo,
 
 
 
-# Conteúdo Disponível no Beta
+## Conteúdo Disponível no Beta
 
 verifique o antiquo.md
 
 
 
-## Fluxo principal do jogo
+### Fluxo principal do jogo
 
 1. Tela inicial
 2. Tela de instruções *(opcional)*
@@ -48,7 +48,7 @@ verifique o antiquo.md
 
 
 
-# Puzzles Planejados
+## Puzzles Planejados
 
 ## Reorganizar Sala (1 Letra)
 
@@ -56,13 +56,13 @@ O jogador deve arrumar os objetos da sala até que, pela perspectiva correta, el
 
 
 
-## Notebook e Código Morse (1 Letra)
+### Notebook e Código Morse (1 Letra)
 
 No computador, Fafa costuma esquecer sua senha e deixa uma música em Morse para lembrar sua senha
 
 
 
-## Puzzle da Luz Negra e Lab Invisível (2 Letras)
+### Puzzle da Luz Negra e Lab Invisível (2 Letras)
 
 O jogador encontra na sala física:
 
@@ -75,7 +75,7 @@ Ao usar a luz negra:
 * a sala digital está escura e o mapa revela o labirinto que é a sala (ela está muito desorganizada);
 * seguindo o mapa corretamente, o jogador encontra um post-it com 2 letras. 
 
-## Organizar as letras nos livros (2 Letras)
+### Organizar as letras nos livros (2 Letras)
 
 * Fafa manda a Lola organizar os livros numa ordem definida
 * Os números dos livros revelam um código
@@ -83,7 +83,7 @@ Ao usar a luz negra:
 
 
 
-# Objetivo Final
+## Objetivo Final
 
 Os puzzles liberam letras que devem ser organizadas para formar a senha final:
 
@@ -92,6 +92,84 @@ I N S P ER → **INSPER**
 Ao inserir a senha no notebook do Fafa, o jogador conclui o jogo e acessa a tela de vitória. 
 
 
+# Andamento (para devs)
+
+> Marque um item como concluído somente quando ele estiver integrado ao projeto e puder ser testado no Unity sem erros no Console.
+
+## Base do jogo
+
+- [x] Lola se movimenta e possui animações
+- [x] Câmera acompanha a personagem
+- [x] Paredes e objetos possuem colisão
+- [x] Sistema de interação com `E` funciona
+- [ ] Progresso dos puzzles é mantido entre as cenas
+
+## Menu
+
+- [x] Botão Jogar inicia uma nova partida
+- [ ] Botão Sair funciona
+- [ ] Nova partida limpa o progresso anterior
+
+## Sala Inicial
+
+- [x] Lola e Fafa aparecem corretamente
+- [x] Computador pode ser acessado
+- [x] Código Morse `. - .` é reproduzido
+- [x] Campo de senha funciona
+- [ ] Senha `REPSNI` leva à vitória
+- [ ] Porta leva ao corredor
+
+## Corredor
+
+- [ ] Lola consegue circular pelo corredor
+- [ ] Paredes possuem colisão
+- [ ] Portas levam às salas corretas
+- [ ] É possível retornar das salas
+
+## Sala de Reorganização
+
+- [ ] Mesas podem ser empurradas
+- [ ] Mesas não atravessam paredes ou outros objetos
+- [ ] Organização correta forma a letra `E`
+- [ ] Puzzle pode ser reiniciado
+- [ ] Pensamento da Lola aparece ao concluir
+- [ ] Porta retorna ao corredor
+
+## Sala Escura
+
+- [ ] Labirinto está montado
+- [ ] Paredes invisíveis possuem colisão
+- [ ] Mapa físico corresponde ao labirinto
+- [ ] Papel com `SP` pode ser encontrado
+- [ ] Pensamento da Lola aparece ao concluir
+- [ ] Porta retorna ao corredor
+
+## Sala dos Livros
+
+- [ ] Livros podem ser selecionados ou organizados
+- [ ] Puzzle utiliza a pista física
+- [ ] Escolhas erradas podem ser corrigidas
+- [ ] Resposta correta revela `IN`
+- [ ] Pensamento da Lola aparece ao concluir
+- [ ] Porta retorna ao corredor
+
+## Computador e final
+
+- [ ] Computador reconhece os puzzles concluídos
+- [ ] Dica final do Fafa aparece
+- [ ] Senhas erradas mostram uma mensagem
+- [ ] `REPSNI` abre a tela de vitória
+- [ ] É possível começar uma nova partida
+
+## Integração final
+
+- [ ] Todas as cenas estão adicionadas à build
+- [ ] Puzzles podem ser concluídos em qualquer ordem
+- [ ] Progresso não é perdido ao trocar de cena
+- [ ] Nenhum puzzle é concluído duas vezes
+- [ ] Fluxo completo pode ser jogado do menu à vitória
+- [ ] Não existem erros vermelhos no Console
+- [ ] Build final foi gerada e testada
 
 # Equipe
 
