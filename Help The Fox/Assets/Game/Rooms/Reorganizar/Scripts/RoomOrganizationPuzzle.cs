@@ -28,11 +28,11 @@ public class RoomOrganizationPuzzle : MonoBehaviour
     public event System.Action Completed;
     public event System.Action Reset;
 
-    private void Reset()
-    {
-        ConfigureReferences();
-        SaveInitialTableState();
-    }
+    // private void Reset()
+    // {
+    //     ConfigureReferences();
+    //     SaveInitialTableState();
+    // }
 
     private void Awake()
     {
