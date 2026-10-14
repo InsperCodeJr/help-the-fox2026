@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: a05408fd8a2e2c44eab36b076b9fb4e7
+guid: 2fb2050f91fdac345b868b4478d7e637
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -678880725143456954
-    second: sprite_prateleira_0
+      213: -6651142942352186712
+    second: preteleira_licros_1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: sprite_prateleira_0
+      name: preteleira_licros_1_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 415
-        height: 173
+        x: 1
+        y: 10
+        width: 484
+        height: 870
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 643f6fcc3912496f0800000000000000
-      internalID: -678880725143456954
+      spriteID: 8a260c2bbb462b3a0800000000000000
+      internalID: -6651142942352186712
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: fdedda1a6c3afe3498bca09c6cf6add3
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      sprite_prateleira_0: -678880725143456954
+      preteleira_licros_1_0: -6651142942352186712
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
