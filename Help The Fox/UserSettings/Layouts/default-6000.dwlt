@@ -69,8 +69,8 @@ MonoBehaviour:
     y: 0
     width: 318.40002
     height: 716.8
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 276, y: 76}
+  m_MaxSize: {x: 4001, y: 4026}
   m_ActualView: {fileID: 19}
   m_Panes:
   - {fileID: 19}
@@ -638,7 +638,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 43.2
+    y: 0
     width: 1536
     height: 36
   m_SerializedDataModeController:
@@ -956,7 +956,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 636
+    y: 580.8
     width: 1216.6
     height: 134
   m_SerializedDataModeController:
@@ -1008,12 +1008,11 @@ MonoBehaviour:
       m_Data: 52564
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 52418
-    - m_Data: 52420
-    - m_Data: 52422
-    - m_Data: 52424
-    - m_Data: 52426
-    - m_Data: 1000000000
+    - m_Data: 52444
+    - m_Data: 52446
+    - m_Data: 52448
+    - m_Data: 52450
+    - m_Data: 52452
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1047,11 +1046,11 @@ MonoBehaviour:
       m_Data: 0
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 52418
-    - m_Data: 52420
-    - m_Data: 52422
-    - m_Data: 52424
-    - m_Data: 52426
+    - m_Data: 52444
+    - m_Data: 52446
+    - m_Data: 52448
+    - m_Data: 52450
+    - m_Data: 52452
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1137,8 +1136,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Inspector\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1217.6
-    y: 79.200005
+    x: 1218.6
+    y: 24
     width: 317.40002
     height: 690.8
   m_SerializedDataModeController:
@@ -1190,7 +1189,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 79.200005
+    y: 24
     width: 198.2
     height: 530.8
   m_SerializedDataModeController:
@@ -1218,8 +1217,8 @@ MonoBehaviour:
       - m_Data: -1382
       m_RenameOverlay:
         m_UserAcceptedRename: 0
-        m_Name: preteleira_licros_1_0
-        m_OriginalName: preteleira_licros_1_0
+        m_Name: 
+        m_OriginalName: 
         m_EditFieldRect:
           serializedVersion: 2
           x: 0
@@ -1227,10 +1226,10 @@ MonoBehaviour:
           width: 0
           height: 0
         m_UserData:
-          m_Data: -18526
+          m_Data: 0
         m_IsWaitingForDelay: 0
         m_IsRenaming: 0
-        m_OriginalEventType: 0
+        m_OriginalEventType: 11
         m_IsRenamingFilename: 0
         m_TrimLeadingAndTrailingWhitespace: 0
         m_ClientGUIView: {fileID: 4}
@@ -1263,8 +1262,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Scene\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 199.2
-    y: 79.200005
+    x: 200.2
+    y: 24
     width: 1016.39996
     height: 530.8
   m_SerializedDataModeController:
