@@ -6,10 +6,12 @@ public class MovimentoRaposa : MonoBehaviour
 
     private Rigidbody2D rb;
     private Vector2 movimento;
+    private Animator animator;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -38,6 +40,16 @@ public class MovimentoRaposa : MonoBehaviour
         }
 
         movimento = movimento.normalized;
+
+        bool andando = movimento != Vector2.zero;
+
+        animator.SetBool("Andando", andando);
+
+        if (andando)
+        {
+            animator.SetFloat("Horizontal", movimento.x);
+            animator.SetFloat("Vertical", movimento.y);
+        }
     }
 
     void FixedUpdate()
