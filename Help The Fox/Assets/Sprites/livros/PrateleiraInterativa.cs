@@ -6,8 +6,22 @@ public class PrateleiraInterativa : MonoBehaviour
     public GameObject painelLivros;
     public MovimentoRaposa movimentoRaposa;
 
+    [Header("Estantes")]
+    public GameObject estante06;
+    public GameObject estante10;
+
+    [Header("Tipo desta prateleira")]
+    public bool usarEstante10 = false;
+
     private bool jogadorPerto = false;
     private bool painelAberto = false;
+
+    void Start()
+    {
+        estante06.SetActive(false);
+        estante10.SetActive(false);
+        painelLivros.SetActive(false);
+    }
 
     void Update()
     {
@@ -19,11 +33,24 @@ public class PrateleiraInterativa : MonoBehaviour
             painelLivros.SetActive(true);
             textoInteracao.SetActive(false);
 
+            if (usarEstante10)
+            {
+                estante06.SetActive(false);
+                estante10.SetActive(true);
+            }
+            else
+            {
+                estante10.SetActive(false);
+                estante06.SetActive(true);
+            }
+
             painelAberto = true;
         }
 
         if (painelAberto && Input.GetKeyDown(KeyCode.Escape))
         {
+            estante06.SetActive(false);
+            estante10.SetActive(false);
             painelLivros.SetActive(false);
 
             movimentoRaposa.enabled = true;
