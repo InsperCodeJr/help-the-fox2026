@@ -56,4 +56,11 @@ public class MovimentoRaposa : MonoBehaviour
     {
         rb.linearVelocity = movimento * velocidade;
     }
+
+    public void PararMovimento()
+    {
+        movimento = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
+        animator.SetBool("Andando", false);
+    }
 }
