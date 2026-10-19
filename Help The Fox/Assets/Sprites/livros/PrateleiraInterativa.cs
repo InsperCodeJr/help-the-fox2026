@@ -6,6 +6,9 @@ public class PrateleiraInterativa : MonoBehaviour
     public GameObject painelLivros;
     public MovimentoRaposa movimentoRaposa;
 
+    [Header("Identificacao")]
+    public string idPrateleira;
+
     [Header("Estantes")]
     public GameObject estante06;
     public GameObject estante10;
@@ -15,6 +18,8 @@ public class PrateleiraInterativa : MonoBehaviour
 
     private bool jogadorPerto = false;
     private bool painelAberto = false;
+
+    public static string PrateleiraAtual { get; private set; }
 
     void Start()
     {
@@ -29,6 +34,8 @@ public class PrateleiraInterativa : MonoBehaviour
         {
             movimentoRaposa.PararMovimento();
             movimentoRaposa.enabled = false;
+
+            PrateleiraAtual = idPrateleira;
 
             painelLivros.SetActive(true);
             textoInteracao.SetActive(false);
@@ -56,6 +63,7 @@ public class PrateleiraInterativa : MonoBehaviour
             movimentoRaposa.enabled = true;
 
             painelAberto = false;
+            PrateleiraAtual = "";
 
             if (jogadorPerto)
             {
