@@ -28,7 +28,6 @@ public class LivroHover : MonoBehaviour
 
     void Update()
     {
-        // Se nenhuma prateleira estiver aberta
         if (string.IsNullOrEmpty(PrateleiraInterativa.PrateleiraAtual))
         {
             imagem.color = new Color(1f, 1f, 1f, 0f);
@@ -46,7 +45,6 @@ public class LivroHover : MonoBehaviour
             + "_L"
             + numeroLivro.ToString("00");
 
-        // Se esse livro já foi retirado dessa prateleira
         if (EstadoLivros.LivroFoiRetirado(idLivro))
         {
             imagem.color = new Color(1f, 1f, 1f, 0f);
@@ -59,7 +57,6 @@ public class LivroHover : MonoBehaviour
             return;
         }
 
-        // Livro ainda está na prateleira
         if (espacoVazio != null)
         {
             espacoVazio.SetActive(false);
@@ -67,10 +64,11 @@ public class LivroHover : MonoBehaviour
 
         Vector2 posicaoMouse = Input.mousePosition;
 
-        mouseEmCima = RectTransformUtility.RectangleContainsScreenPoint(
-            rectTransform,
-            posicaoMouse
-        );
+        mouseEmCima =
+            RectTransformUtility.RectangleContainsScreenPoint(
+                rectTransform,
+                posicaoMouse
+            );
 
         if (mouseEmCima)
         {
@@ -83,18 +81,22 @@ public class LivroHover : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0))
             {
-                EstadoLivros.RetirarLivro(idLivro);
+                bool conseguiuPegar =
+                    EstadoLivros.RetirarLivro(idLivro);
 
-                imagem.color = new Color(
-                    1f,
-                    1f,
-                    1f,
-                    0f
-                );
-
-                if (espacoVazio != null)
+                if (conseguiuPegar)
                 {
-                    espacoVazio.SetActive(true);
+                    imagem.color = new Color(
+                        1f,
+                        1f,
+                        1f,
+                        0f
+                    );
+
+                    if (espacoVazio != null)
+                    {
+                        espacoVazio.SetActive(true);
+                    }
                 }
             }
         }

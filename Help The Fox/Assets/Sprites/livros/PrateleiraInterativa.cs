@@ -30,45 +30,57 @@ public class PrateleiraInterativa : MonoBehaviour
 
     void Update()
     {
-        if (jogadorPerto && Input.GetKeyDown(KeyCode.P) && !painelAberto)
+        if (jogadorPerto && Input.GetKeyDown(KeyCode.P))
         {
-            movimentoRaposa.PararMovimento();
-            movimentoRaposa.enabled = false;
-
-            PrateleiraAtual = idPrateleira;
-
-            painelLivros.SetActive(true);
-            textoInteracao.SetActive(false);
-
-            if (usarEstante10)
+            if (!painelAberto)
             {
-                estante06.SetActive(false);
-                estante10.SetActive(true);
+                AbrirEstante();
             }
             else
             {
-                estante10.SetActive(false);
-                estante06.SetActive(true);
+                FecharEstante();
             }
-
-            painelAberto = true;
         }
+    }
 
-        if (painelAberto && Input.GetKeyDown(KeyCode.Escape))
+    void AbrirEstante()
+    {
+        movimentoRaposa.PararMovimento();
+        movimentoRaposa.enabled = false;
+
+        PrateleiraAtual = idPrateleira;
+
+        painelLivros.SetActive(true);
+        textoInteracao.SetActive(false);
+
+        if (usarEstante10)
         {
             estante06.SetActive(false);
+            estante10.SetActive(true);
+        }
+        else
+        {
             estante10.SetActive(false);
-            painelLivros.SetActive(false);
+            estante06.SetActive(true);
+        }
 
-            movimentoRaposa.enabled = true;
+        painelAberto = true;
+    }
 
-            painelAberto = false;
-            PrateleiraAtual = "";
+    void FecharEstante()
+    {
+        estante06.SetActive(false);
+        estante10.SetActive(false);
+        painelLivros.SetActive(false);
 
-            if (jogadorPerto)
-            {
-                textoInteracao.SetActive(true);
-            }
+        movimentoRaposa.enabled = true;
+
+        painelAberto = false;
+        PrateleiraAtual = "";
+
+        if (jogadorPerto)
+        {
+            textoInteracao.SetActive(true);
         }
     }
 
