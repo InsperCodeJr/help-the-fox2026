@@ -1,0 +1,6 @@
+{
+    "name": "HelpTheFox.Reorganizar.Editor",
+    "references": ["HelpTheFox.Reorganizar"],
+    "includePlatforms": ["Editor"],
+    "autoReferenced": true
+}

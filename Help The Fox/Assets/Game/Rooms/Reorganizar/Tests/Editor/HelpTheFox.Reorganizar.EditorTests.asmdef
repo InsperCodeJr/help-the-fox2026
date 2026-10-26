@@ -1,0 +1,7 @@
+{
+    "name": "HelpTheFox.Reorganizar.EditorTests",
+    "references": ["HelpTheFox.Reorganizar"],
+    "includePlatforms": ["Editor"],
+    "optionalUnityReferences": ["TestAssemblies"],
+    "autoReferenced": false
+}

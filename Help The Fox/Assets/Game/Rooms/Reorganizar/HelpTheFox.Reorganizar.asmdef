@@ -1,0 +1,5 @@
+{
+    "name": "HelpTheFox.Reorganizar",
+    "references": ["Unity.InputSystem"],
+    "autoReferenced": true
+}

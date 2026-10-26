@@ -1,409 +1,127 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using Cell = TableBoardState.Cell;
 
 public class RoomOrganizationPuzzle : MonoBehaviour
 {
-    [Header("Room")]
     [SerializeField] private TableGrid tableGrid;
     [SerializeField] private Transform playerTransform;
-    [SerializeField] private List<PushableTable> tables = new();
-    [SerializeField] private List<TableTarget> targets = new();
-    [SerializeField] private GameObject letterEVisual;
+    [SerializeField] private List<PushableTable> tables = new List<PushableTable>();
+    [SerializeField] private List<TableTarget> targets = new List<TableTarget>();
+    [SerializeField] private GameObject letterEVisual = null;
+    [SerializeField, Min(0.05f)] private float pushCooldownSeconds = 0.14f;
+    private TableBoardState state;
+    private float nextAllowedMoveTime;
 
-    [Header("Movement")]
-    [SerializeField] private float pushCooldownSeconds = 0.12f;
-    [SerializeField] private float playerReachDistance = 1.5f;
-
-    [Header("Reset")]
-    [SerializeField] private bool lockResetAfterCompletion = true;
-
-    private readonly Dictionary<PushableTable, Vector2Int> initialTablePositions = new();
-    private float nextAllowedPushTime;
-    private bool isSolved;
-
-    public bool IsSolved => isSolved;
-    public int OccupiedTargetCount => CountOccupiedTargets();
+    public bool IsSolved => state != null && state.IsSolved;
+    public bool InputBlocked { get; private set; }
+    public bool IsReady => state != null;
+    public int OccupiedTargetCount => state != null ? state.OccupiedTargetCount : 0;
     public int RequiredTargetCount => targets.Count;
-    public event System.Action Completed;
-    public event System.Action Reset;
+    public event Action Completed;
+    public event Action PuzzleReset;
 
-    private void Reset()
+    public void Initialize(TableGrid grid, Transform player, IEnumerable<PushableTable> roomTables,
+        IEnumerable<TableTarget> roomTargets)
     {
-        ConfigureReferences();
-        SaveInitialTableState();
+        tableGrid = grid;
+        playerTransform = player;
+        tables = new List<PushableTable>(roomTables);
+        targets = new List<TableTarget>(roomTargets);
+        BuildState();
     }
 
-    private void Awake()
+    private void Start()
     {
-        ConfigureReferences();
-        SaveInitialTableState();
-        ApplyBoardState();
+        if (state != null) return;
+        if (tableGrid == null) tableGrid = GetComponent<TableGrid>();
+        if (tables.Count == 0) tables.AddRange(GetComponentsInChildren<PushableTable>(true));
+        if (targets.Count == 0) targets.AddRange(GetComponentsInChildren<TableTarget>(true));
+        BuildState();
     }
 
-    private void Update()
+    private void BuildState()
     {
-        if (Keyboard.current == null)
+        if (tableGrid == null || playerTransform == null)
         {
+            Debug.LogError("Reorganizar: atribua a grade e o jogador local no Inspector.", this);
             return;
         }
-
-        if (Keyboard.current.rKey.wasPressedThisFrame)
+        try
         {
-            if (!lockResetAfterCompletion || !isSolved)
+            var walls = new List<Cell>();
+            var tableCells = new List<Cell>();
+            var targetCells = new List<Cell>();
+            foreach (Vector2Int wall in tableGrid.WallCells) walls.Add(ToCell(wall));
+            foreach (PushableTable table in tables)
             {
-                ResetPuzzle();
+                if (table == null) throw new ArgumentException("Referência de mesa ausente.");
+                table.SetTableGrid(tableGrid);
+                table.BindPuzzle(this);
+                tableCells.Add(ToCell(table.GridPosition));
             }
+            foreach (TableTarget target in targets)
+            {
+                if (target == null) throw new ArgumentException("Referência de alvo ausente.");
+                targetCells.Add(ToCell(target.CellPosition));
+            }
+            state = new TableBoardState(tableGrid.BoardSize.x, tableGrid.BoardSize.y, walls,
+                tableCells, targetCells, ToCell(tableGrid.WorldToCell(playerTransform.position)));
+            SynchronizeVisuals();
         }
-
-        if (Time.time < nextAllowedPushTime)
+        catch (ArgumentException error)
         {
-            return;
+            state = null;
+            Debug.LogError("Reorganizar: configuração inválida: " + error.Message, this);
         }
-
-        Vector2Int direction = ReadMovementInput();
-        if (direction == Vector2Int.zero)
-        {
-            return;
-        }
-
-        if (playerTransform == null)
-        {
-            playerTransform = ResolvePlayer();
-        }
-
-        TryPushTableInFrontOfPlayer(direction);
     }
 
-    public void ResetPuzzle()
+    public void SetInputBlocked(bool blocked) => InputBlocked = blocked;
+
+    public bool TryMovePlayer(Vector2Int direction)
     {
-        if (lockResetAfterCompletion && isSolved)
-        {
-            return;
-        }
-
-        foreach (PushableTable table in tables)
-        {
-            if (table == null)
-            {
-                continue;
-            }
-
-            if (initialTablePositions.TryGetValue(table, out Vector2Int startingCell))
-            {
-                table.SetGridPosition(startingCell);
-            }
-        }
-
-        if (letterEVisual != null)
-        {
-            letterEVisual.SetActive(false);
-        }
-
-        isSolved = false;
-        nextAllowedPushTime = 0f;
-        Reset?.Invoke();
+        if (state == null || InputBlocked || Time.timeScale <= 0f || Time.time < nextAllowedMoveTime)
+            return false;
+        if (!ToCell(direction).IsCardinal) return false;
+        nextAllowedMoveTime = Time.time + pushCooldownSeconds;
+        bool wasSolved = state.IsSolved;
+        if (!state.TryStep(ToCell(direction), out _)) return false;
+        SynchronizeVisuals();
+        if (!wasSolved && state.IsSolved) Completed?.Invoke();
+        return true;
     }
 
     public bool TryPushTable(PushableTable table, Vector2Int direction)
     {
-        if (table == null || direction == Vector2Int.zero || Time.time < nextAllowedPushTime)
-        {
+        if (state == null || table == null || !tables.Contains(table) || !ToCell(direction).IsCardinal)
             return false;
-        }
-
-        if (tableGrid == null)
-        {
-            return false;
-        }
-
-        Vector2Int targetCell = table.GridPosition + direction;
-
-        if (tableGrid.IsCellBlocked(targetCell, table))
-        {
-            return false;
-        }
-
-        table.SetGridPosition(targetCell);
-        nextAllowedPushTime = Time.time + pushCooldownSeconds;
-
-        CheckForCompletion();
-        return true;
+        if (state.Player + ToCell(direction) != ToCell(table.GridPosition)) return false;
+        return TryMovePlayer(direction);
     }
 
-    public bool HasTargetOverlap()
+    public void ResetPuzzle()
     {
-        HashSet<Vector2Int> occupiedTargetCells = new();
-
-        foreach (TableTarget target in targets)
-        {
-            if (target == null)
-            {
-                continue;
-            }
-
-            if (tableGrid == null || !tableGrid.IsCellInsideBoard(target.CellPosition))
-            {
-                continue;
-            }
-
-            if (!occupiedTargetCells.Add(target.CellPosition))
-            {
-                return true;
-            }
-        }
-
-        foreach (PushableTable table in tables)
-        {
-            if (table == null)
-            {
-                continue;
-            }
-
-            if (IsTargetCellOccupiedByTable(table.GridPosition))
-            {
-                if (!occupiedTargetCells.Add(table.GridPosition))
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        if (state == null || InputBlocked || !state.Reset()) return;
+        nextAllowedMoveTime = 0f;
+        SynchronizeVisuals();
+        PuzzleReset?.Invoke();
     }
 
-    public int CountOccupiedTargets()
+    public void RestoreSolvedLayout()
     {
-        int totals = 0;
-
-        foreach (TableTarget target in targets)
-        {
-            if (target == null)
-            {
-                continue;
-            }
-
-            if (IsTargetCellOccupiedByTable(target.CellPosition))
-            {
-                totals++;
-            }
-        }
-
-        return totals;
+        if (state == null) return;
+        state.RestoreSolvedLayout();
+        SynchronizeVisuals();
     }
 
-    public bool IsTargetCellOccupiedByTable(Vector2Int cell)
+    private void SynchronizeVisuals()
     {
-        foreach (PushableTable table in tables)
-        {
-            if (table != null && table.GridPosition == cell)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        for (int i = 0; i < tables.Count; i++) tables[i].SetGridPosition(ToVector(state.TableAtIndex(i)));
+        playerTransform.position = tableGrid.CellToWorld(ToVector(state.Player));
+        if (letterEVisual != null) letterEVisual.SetActive(state.IsSolved);
     }
 
-    public Vector2Int ReadMovementInput()
-    {
-        Keyboard keyboard = Keyboard.current;
-        if (keyboard == null)
-        {
-            return Vector2Int.zero;
-        }
-
-        Vector2Int direction = Vector2Int.zero;
-
-        if (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed)
-        {
-            direction.x -= 1;
-        }
-
-        if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed)
-        {
-            direction.x += 1;
-        }
-
-        if (keyboard.sKey.isPressed || keyboard.downArrowKey.isPressed)
-        {
-            direction.y -= 1;
-        }
-
-        if (keyboard.wKey.isPressed || keyboard.upArrowKey.isPressed)
-        {
-            direction.y += 1;
-        }
-
-        if (direction.x != 0 && direction.y != 0)
-        {
-            direction = new Vector2Int(direction.x, 0);
-        }
-
-        return direction;
-    }
-
-    public void SetLetterEVisual(bool enabled)
-    {
-        if (letterEVisual != null)
-        {
-            letterEVisual.SetActive(enabled);
-        }
-    }
-
-    private void ConfigureReferences()
-    {
-        if (tableGrid == null)
-        {
-            tableGrid = GetComponent<TableGrid>();
-        }
-
-        if (tables.Count == 0)
-        {
-            tables.AddRange(GetComponentsInChildren<PushableTable>(true));
-        }
-
-        if (targets.Count == 0)
-        {
-            targets.AddRange(GetComponentsInChildren<TableTarget>(true));
-        }
-
-        if (playerTransform == null)
-        {
-            playerTransform = ResolvePlayer();
-        }
-    }
-
-    private void SaveInitialTableState()
-    {
-        initialTablePositions.Clear();
-
-        foreach (PushableTable table in tables)
-        {
-            if (table == null)
-            {
-                continue;
-            }
-
-            if (!initialTablePositions.ContainsKey(table))
-            {
-                initialTablePositions.Add(table, table.GridPosition);
-            }
-        }
-    }
-
-    private void ApplyBoardState()
-    {
-        if (tableGrid == null)
-        {
-            return;
-        }
-
-        foreach (PushableTable table in tables)
-        {
-            if (table != null)
-            {
-                table.SetTableGrid(tableGrid);
-                table.SnapToGrid();
-            }
-        }
-    }
-
-    private void TryPushTableInFrontOfPlayer(Vector2Int direction)
-    {
-        if (playerTransform == null || tableGrid == null)
-        {
-            return;
-        }
-
-        Vector2Int playerCell = tableGrid.WorldToCell(playerTransform.position);
-        Vector2Int tableCellAhead = playerCell + direction;
-        PushableTable table = tableGrid.GetTableAt(tableCellAhead);
-
-        if (table == null)
-        {
-            return;
-        }
-
-        float distance = Vector2.Distance(playerTransform.position, table.transform.position);
-        if (distance > playerReachDistance)
-        {
-            return;
-        }
-
-        TryPushTable(table, direction);
-    }
-
-    private Transform ResolvePlayer()
-    {
-        GameObject foundPlayer = GameObject.FindWithTag("Player");
-
-        if (foundPlayer == null)
-        {
-            foundPlayer = GameObject.Find("Player");
-        }
-
-        if (foundPlayer == null)
-        {
-            foundPlayer = GameObject.Find("player");
-        }
-
-        if (foundPlayer == null)
-        {
-            return null;
-        }
-
-        return foundPlayer.transform;
-    }
-
-    private void CheckForCompletion()
-    {
-        if (isSolved)
-        {
-            return;
-        }
-
-        if (targets.Count == 0 || HasTargetOverlap())
-        {
-            return;
-        }
-
-        if (CountOccupiedTargets() >= targets.Count)
-        {
-            CompletePuzzle();
-        }
-    }
-
-    private void CompletePuzzle()
-    {
-        isSolved = true;
-
-        if (letterEVisual != null)
-        {
-            letterEVisual.SetActive(true);
-        }
-
-        Completed?.Invoke();
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        if (targets.Count == 0)
-        {
-            return;
-        }
-
-        Gizmos.color = new Color(0.3f, 1f, 0.7f, 0.6f);
-
-        foreach (TableTarget target in targets)
-        {
-            if (target == null)
-            {
-                continue;
-            }
-
-            Vector3 worldPosition = target.transform.position;
-            Gizmos.DrawWireCube(worldPosition, new Vector3(0.7f, 0.7f, 0.1f));
-        }
-    }
+    private static Cell ToCell(Vector2Int vector) => new Cell(vector.x, vector.y);
+    private static Vector2Int ToVector(Cell cell) => new Vector2Int(cell.X, cell.Y);
 }

@@ -1,3 +1,7 @@
 ﻿<Solution>
+  <Project Path="HelpTheFox.Reorganizar.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="HelpTheFox.Reorganizar.PlayModeTests.csproj" />
+  <Project Path="HelpTheFox.Reorganizar.EditorTests.csproj" />
+  <Project Path="HelpTheFox.Reorganizar.Editor.csproj" />
 </Solution>

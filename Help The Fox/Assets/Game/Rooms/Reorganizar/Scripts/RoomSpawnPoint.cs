@@ -2,11 +2,18 @@ using UnityEngine;
 
 public class RoomSpawnPoint : MonoBehaviour
 {
-    [SerializeField] private Color gizmoColor = new Color(0.2f, 0.8f, 1f, 0.9f);
+    public bool TryPlacePlayer(Transform player, TableGrid grid)
+    {
+        if (player == null || grid == null) return false;
+        Vector2Int cell = grid.WorldToCell(transform.position);
+        if (grid.IsCellBlocked(cell)) return false;
+        player.position = grid.CellToWorld(cell);
+        return true;
+    }
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = gizmoColor;
-        Gizmos.DrawWireSphere(transform.position, 0.4f);
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, 0.35f);
     }
 }

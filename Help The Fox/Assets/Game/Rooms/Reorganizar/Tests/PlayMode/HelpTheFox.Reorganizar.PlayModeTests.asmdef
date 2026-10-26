@@ -1,0 +1,6 @@
+{
+    "name": "HelpTheFox.Reorganizar.PlayModeTests",
+    "references": ["HelpTheFox.Reorganizar", "Unity.InputSystem"],
+    "optionalUnityReferences": ["TestAssemblies"],
+    "autoReferenced": false
+}
