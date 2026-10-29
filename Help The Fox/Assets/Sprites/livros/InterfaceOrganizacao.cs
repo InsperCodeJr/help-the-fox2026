@@ -26,9 +26,14 @@ public class InterfaceOrganizacao : MonoBehaviour
     private bool puzzleConcluido;
     private bool atualizarInterface = true;
     private AreaOrganizacao areaOrganizacao;
+    private InterfaceMochila interfaceMochila;
+
+    private bool InteracaoBloqueada => interfaceMochila != null
+        && (interfaceMochila.EstaAberta || interfaceMochila.EstaLendo);
 
     void Awake()
     {
+        interfaceMochila = GetComponentInParent<InterfaceMochila>();
         livrosNasPosicoes = new string[posicoes.Length];
 
         PrepararTiposPrateleiras();
@@ -162,7 +167,7 @@ public class InterfaceOrganizacao : MonoBehaviour
 
     public void SelecionarLivro(int indice)
     {
-        if (puzzleConcluido || indice < 0 || indice >= livrosAtuais.Count)
+        if (InteracaoBloqueada || puzzleConcluido || indice < 0 || indice >= livrosAtuais.Count)
         {
             return;
         }
@@ -183,7 +188,7 @@ public class InterfaceOrganizacao : MonoBehaviour
     public void ColocarLivroNaPosicao(int numeroPosicao)
     {
         int indice = numeroPosicao - 1;
-        if (puzzleConcluido || indice < 0 || indice >= livrosNasPosicoes.Length)
+        if (InteracaoBloqueada || puzzleConcluido || indice < 0 || indice >= livrosNasPosicoes.Length)
         {
             return;
         }

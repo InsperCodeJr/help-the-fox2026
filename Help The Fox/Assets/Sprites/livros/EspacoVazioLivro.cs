@@ -5,14 +5,18 @@ public class EspacoVazioLivro : MonoBehaviour
     public int numeroLivro;
 
     private RectTransform rectTransform;
+    private InterfaceMochila interfaceMochila;
 
     void Start()
     {
+        interfaceMochila = GetComponentInParent<InterfaceMochila>();
         rectTransform = GetComponent<RectTransform>();
     }
 
     void Update()
     {
+        if (interfaceMochila != null && interfaceMochila.EstaAberta) return;
+
         if (string.IsNullOrEmpty(PrateleiraInterativa.PrateleiraAtual))
         {
             return;

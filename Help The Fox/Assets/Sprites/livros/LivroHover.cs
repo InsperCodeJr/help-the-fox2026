@@ -10,11 +10,13 @@ public class LivroHover : MonoBehaviour
 
     private RectTransform rectTransform;
     private Image imagem;
+    private InterfaceMochila interfaceMochila;
 
     private bool mouseEmCima = false;
 
     void Start()
     {
+        interfaceMochila = GetComponentInParent<InterfaceMochila>();
         rectTransform = GetComponent<RectTransform>();
         imagem = GetComponent<Image>();
 
@@ -28,6 +30,8 @@ public class LivroHover : MonoBehaviour
 
     void Update()
     {
+        if (interfaceMochila != null && interfaceMochila.EstaAberta) return;
+
         if (string.IsNullOrEmpty(PrateleiraInterativa.PrateleiraAtual))
         {
             imagem.color = new Color(1f, 1f, 1f, 0f);

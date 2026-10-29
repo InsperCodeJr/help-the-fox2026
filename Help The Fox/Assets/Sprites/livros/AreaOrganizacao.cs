@@ -8,15 +8,19 @@ public class AreaOrganizacao : MonoBehaviour
 
     private bool jogadorPerto = false;
     private bool painelAberto = false;
+    private InterfaceMochila interfaceMochila;
 
     void Start()
     {
+        interfaceMochila = FindAnyObjectByType<InterfaceMochila>();
         textoOrganizacao.SetActive(false);
         painelOrganizacao.SetActive(false);
     }
 
     void Update()
     {
+        if (interfaceMochila != null && interfaceMochila.EstaAberta) return;
+
         if (jogadorPerto && Input.GetKeyDown(KeyCode.P))
         {
             if (painelAberto)

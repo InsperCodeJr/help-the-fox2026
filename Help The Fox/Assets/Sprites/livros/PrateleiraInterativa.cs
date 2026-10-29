@@ -18,11 +18,13 @@ public class PrateleiraInterativa : MonoBehaviour
 
     private bool jogadorPerto = false;
     private bool painelAberto = false;
+    private InterfaceMochila interfaceMochila;
 
     public static string PrateleiraAtual { get; private set; }
 
     void Start()
     {
+        interfaceMochila = FindAnyObjectByType<InterfaceMochila>();
         estante06.SetActive(false);
         estante10.SetActive(false);
         painelLivros.SetActive(false);
@@ -30,6 +32,8 @@ public class PrateleiraInterativa : MonoBehaviour
 
     void Update()
     {
+        if (interfaceMochila != null && interfaceMochila.EstaAberta) return;
+
         if (jogadorPerto && Input.GetKeyDown(KeyCode.P))
         {
             if (!painelAberto)
