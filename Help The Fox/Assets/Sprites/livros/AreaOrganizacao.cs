@@ -41,7 +41,7 @@ public class AreaOrganizacao : MonoBehaviour
         painelAberto = true;
     }
 
-    void FecharPainel()
+    public void FecharPainel()
     {
         painelOrganizacao.SetActive(false);
 

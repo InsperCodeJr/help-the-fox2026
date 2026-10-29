@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class EstadoLivros : MonoBehaviour
 {
-    private static HashSet<string> livrosRetirados = new HashSet<string>();
+    // A ordem da lista registra a sequencia de coleta dos livros ainda na mochila.
+    private static readonly List<string> livrosRetirados = new List<string>();
 
     private const int LIMITE_MOCHILA = 7;
 
@@ -19,7 +20,7 @@ public class EstadoLivros : MonoBehaviour
 
     public static bool RetirarLivro(string idLivro)
     {
-        if (livrosRetirados.Contains(idLivro))
+        if (string.IsNullOrEmpty(idLivro) || livrosRetirados.Contains(idLivro))
         {
             return false;
         }
@@ -62,6 +63,11 @@ public class EstadoLivros : MonoBehaviour
     public static List<string> PegarLivrosDaMochila()
     {
         return new List<string>(livrosRetirados);
+    }
+
+    public static string PegarUltimoLivroPego()
+    {
+        return livrosRetirados.Count > 0 ? livrosRetirados[livrosRetirados.Count - 1] : string.Empty;
     }
 
     public static int QuantidadeLivros()

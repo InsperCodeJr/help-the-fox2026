@@ -1,58 +1,49 @@
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 public class LivroOrganizacao : MonoBehaviour
 {
     public int indiceLivro;
 
-    private RectTransform rectTransform;
+    private InterfaceOrganizacao interfaceOrganizacao;
+    private RectTransform retangulo;
     private TMP_Text texto;
+    private VisualLivroOrganizacao visual;
+    private Camera cameraInterface;
 
-    private Color corNormal;
-    private Color corSelecionado;
-
-    void Start()
+    public void Inicializar(InterfaceOrganizacao organizacao)
     {
-        rectTransform = GetComponent<RectTransform>();
-        texto = GetComponent<TMP_Text>();
-
-        corNormal = Color.white;
-        corSelecionado = new Color(1f, 1f, 0.4f, 1f);
-    }
-
-    void Update()
-    {
-        if (!gameObject.activeInHierarchy)
+        if (visual != null)
         {
             return;
         }
 
-        Vector2 posicaoMouse = Input.mousePosition;
+        interfaceOrganizacao = organizacao;
+        retangulo = GetComponent<RectTransform>();
+        texto = GetComponent<TMP_Text>();
+        visual = new VisualLivroOrganizacao(retangulo, texto);
+        Canvas canvas = GetComponentInParent<Canvas>().rootCanvas;
+        cameraInterface = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+    }
 
-        bool mouseEmCima =
-            RectTransformUtility.RectangleContainsScreenPoint(
-                rectTransform,
-                posicaoMouse
-            );
-
-        if (mouseEmCima && Input.GetMouseButtonDown(0))
+    void Update()
+    {
+        if (retangulo != null && Input.GetMouseButtonDown(0)
+            && RectTransformUtility.RectangleContainsScreenPoint(
+                retangulo, Input.mousePosition, cameraInterface))
         {
-            InterfaceOrganizacao interfaceOrganizacao =
-                GetComponentInParent<InterfaceOrganizacao>();
-
             interfaceOrganizacao.SelecionarLivro(indiceLivro);
         }
     }
 
+    public void ExibirLivro(string identificador, Sprite sprite)
+    {
+        texto.text = identificador;
+        visual.Mostrar(identificador, sprite, retangulo.rect.size - new Vector2(8f, 6f));
+    }
+
     public void MostrarSelecionado(bool selecionado)
     {
-        if (selecionado)
-        {
-            texto.color = corSelecionado;
-        }
-        else
-        {
-            texto.color = corNormal;
-        }
+        visual?.MostrarSelecionado(selecionado);
     }
 }

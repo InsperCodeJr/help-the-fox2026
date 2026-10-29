@@ -7,6 +7,11 @@ public class DevolverLivroTeste : MonoBehaviour
 
     void Update()
     {
+        if (botaoDevolver == null)
+        {
+            return;
+        }
+
         if (string.IsNullOrEmpty(PrateleiraInterativa.PrateleiraAtual))
         {
             botaoDevolver.SetActive(false);

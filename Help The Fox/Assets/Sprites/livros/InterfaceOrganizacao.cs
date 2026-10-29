@@ -1,11 +1,16 @@
+using System;
 using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 public class InterfaceOrganizacao : MonoBehaviour
 {
     public TMP_Text[] textosLivros;
     public PosicaoOrganizacao[] posicoes;
+
+    [Header("Sprites das prateleiras, na ordem dos livros")]
+    public Sprite[] spritesEstante06;
+    public Sprite[] spritesEstante11;
 
     [Header("Ordem correta dos livros")]
     public string[] ordemCorreta = new string[5];
@@ -13,20 +18,52 @@ public class InterfaceOrganizacao : MonoBehaviour
     [Header("Conclusao")]
     public GameObject mensagemConclusao;
 
-    private List<string> livrosAtuais = new List<string>();
-
+    private readonly List<string> livrosAtuais = new List<string>();
+    private readonly Dictionary<string, bool> tiposPrateleiras = new Dictionary<string, bool>();
+    private bool tiposPrateleirasInicializados;
+    private string[] livrosNasPosicoes;
     private string livroSelecionado = "";
+    private bool puzzleConcluido;
+    private bool atualizarInterface = true;
+    private AreaOrganizacao areaOrganizacao;
 
-    private string[] livrosNasPosicoes = new string[5];
-
-    private bool puzzleConcluido = false;
-
-    void Start()
+    void Awake()
     {
+        livrosNasPosicoes = new string[posicoes.Length];
+
+        PrepararTiposPrateleiras();
+
+        foreach (AreaOrganizacao area in FindObjectsByType<AreaOrganizacao>(
+            FindObjectsInactive.Include))
+        {
+            if (area.painelOrganizacao == gameObject)
+            {
+                areaOrganizacao = area;
+                break;
+            }
+        }
+
+        foreach (TMP_Text texto in textosLivros)
+        {
+            texto.GetComponent<LivroOrganizacao>().Inicializar(this);
+        }
+
+        foreach (PosicaoOrganizacao posicao in posicoes)
+        {
+            posicao.Inicializar(this);
+        }
+
         if (mensagemConclusao != null)
         {
             mensagemConclusao.SetActive(false);
         }
+    }
+
+    void OnEnable()
+    {
+        atualizarInterface = true;
+        AtualizarLivros();
+        AtualizarPosicoes();
     }
 
     void Update()
@@ -36,63 +73,101 @@ public class InterfaceOrganizacao : MonoBehaviour
 
     void AtualizarLivros()
     {
-        List<string> mochila =
-            EstadoLivros.PegarLivrosDaMochila();
+        List<string> mochila = EstadoLivros.PegarLivrosDaMochila();
+        mochila.Sort(StringComparer.Ordinal);
+        mochila.RemoveAll(LivroJaEstaOrganizado);
 
-        livrosAtuais.Clear();
-
-        foreach (string livro in mochila)
+        bool mudou = atualizarInterface || mochila.Count != livrosAtuais.Count;
+        for (int i = 0; !mudou && i < mochila.Count; i++)
         {
-            if (!LivroJaEstaOrganizado(livro))
-            {
-                livrosAtuais.Add(livro);
-            }
+            mudou = mochila[i] != livrosAtuais[i];
+        }
+
+        if (!mudou)
+        {
+            return;
+        }
+
+        atualizarInterface = false;
+        livrosAtuais.Clear();
+        livrosAtuais.AddRange(mochila);
+        if (!livrosAtuais.Contains(livroSelecionado))
+        {
+            livroSelecionado = "";
         }
 
         for (int i = 0; i < textosLivros.Length; i++)
         {
             if (i < livrosAtuais.Count)
             {
-                textosLivros[i].text = livrosAtuais[i];
                 textosLivros[i].gameObject.SetActive(true);
+                textosLivros[i].GetComponent<LivroOrganizacao>().ExibirLivro(
+                    livrosAtuais[i], PegarSprite(livrosAtuais[i]));
             }
             else
             {
-                textosLivros[i].text = "";
                 textosLivros[i].gameObject.SetActive(false);
             }
         }
+
+        AtualizarDestaque();
     }
 
     bool LivroJaEstaOrganizado(string idLivro)
     {
-        for (int i = 0; i < livrosNasPosicoes.Length; i++)
+        return Array.IndexOf(livrosNasPosicoes, idLivro) >= 0;
+    }
+
+    void PrepararTiposPrateleiras()
+    {
+        if (tiposPrateleirasInicializados) return;
+
+        foreach (PrateleiraInterativa prateleira in FindObjectsByType<PrateleiraInterativa>(
+            FindObjectsInactive.Include))
         {
-            if (livrosNasPosicoes[i] == idLivro)
+            if (!string.IsNullOrEmpty(prateleira.idPrateleira))
             {
-                return true;
+                tiposPrateleiras[prateleira.idPrateleira] = prateleira.usarEstante10;
             }
         }
 
-        return false;
+        tiposPrateleirasInicializados = true;
+    }
+
+    public Sprite PegarSprite(string idLivro)
+    {
+        if (string.IsNullOrEmpty(idLivro)) return null;
+
+        PrepararTiposPrateleiras();
+        int separador = idLivro.LastIndexOf("_L", StringComparison.Ordinal);
+        if (separador < 0 || !int.TryParse(idLivro.Substring(separador + 2), out int numero))
+        {
+            return null;
+        }
+
+        string prateleira = idLivro.Substring(0, separador);
+        bool estanteGrande = tiposPrateleiras.TryGetValue(prateleira, out bool grande) && grande;
+        Sprite[] sprites = estanteGrande ? spritesEstante11 : spritesEstante06;
+        return sprites != null && numero > 0 && numero <= sprites.Length ? sprites[numero - 1] : null;
+    }
+
+    void AtualizarPosicoes()
+    {
+        for (int i = 0; i < posicoes.Length; i++)
+        {
+            string idLivro = livrosNasPosicoes[i];
+            posicoes[i].ExibirLivro(idLivro, string.IsNullOrEmpty(idLivro) ? null : PegarSprite(idLivro));
+        }
     }
 
     public void SelecionarLivro(int indice)
     {
-        if (puzzleConcluido)
-        {
-            return;
-        }
-
-        if (indice < 0 || indice >= livrosAtuais.Count)
+        if (puzzleConcluido || indice < 0 || indice >= livrosAtuais.Count)
         {
             return;
         }
 
         livroSelecionado = livrosAtuais[indice];
-
-        Debug.Log("LIVRO SELECIONADO: " + livroSelecionado);
-
         AtualizarDestaque();
     }
 
@@ -100,116 +175,79 @@ public class InterfaceOrganizacao : MonoBehaviour
     {
         for (int i = 0; i < textosLivros.Length; i++)
         {
-            LivroOrganizacao livro =
-                textosLivros[i].GetComponent<LivroOrganizacao>();
-
-            if (livro != null)
-            {
-                bool selecionado =
-                    i < livrosAtuais.Count &&
-                    livrosAtuais[i] == livroSelecionado;
-
-                livro.MostrarSelecionado(selecionado);
-            }
+            textosLivros[i].GetComponent<LivroOrganizacao>().MostrarSelecionado(
+                i < livrosAtuais.Count && livrosAtuais[i] == livroSelecionado);
         }
     }
 
     public void ColocarLivroNaPosicao(int numeroPosicao)
     {
-        if (puzzleConcluido)
+        int indice = numeroPosicao - 1;
+        if (puzzleConcluido || indice < 0 || indice >= livrosNasPosicoes.Length)
         {
             return;
         }
 
-        int indicePosicao = numeroPosicao - 1;
-
-        if (
-            indicePosicao < 0 ||
-            indicePosicao >= livrosNasPosicoes.Length
-        )
+        // Clicar em uma posicao ocupada devolve o livro a lista da mochila.
+        if (!string.IsNullOrEmpty(livrosNasPosicoes[indice]))
         {
-            return;
-        }
-
-        if (!string.IsNullOrEmpty(livrosNasPosicoes[indicePosicao]))
-        {
-            string livroRetirado =
-                livrosNasPosicoes[indicePosicao];
-
-            livrosNasPosicoes[indicePosicao] = "";
-
-            posicoes[indicePosicao].AtualizarTexto("");
-
+            livrosNasPosicoes[indice] = null;
             livroSelecionado = "";
-
-            AtualizarLivros();
-            AtualizarDestaque();
-
-            Debug.Log(
-                livroRetirado
-                + " retirado da posicao "
-                + numeroPosicao
-            );
-
+            AtualizarOrganizacao();
             return;
         }
 
         if (string.IsNullOrEmpty(livroSelecionado))
         {
-            Debug.Log("Selecione um livro primeiro.");
             return;
         }
 
-        livrosNasPosicoes[indicePosicao] =
-            livroSelecionado;
-
-        Debug.Log(
-            livroSelecionado
-            + " colocado na posicao "
-            + numeroPosicao
-        );
-
-        posicoes[indicePosicao].AtualizarTexto(
-            livroSelecionado
-        );
-
+        livrosNasPosicoes[indice] = livroSelecionado;
         livroSelecionado = "";
-
-        AtualizarLivros();
-        AtualizarDestaque();
-
+        AtualizarOrganizacao();
         VerificarVitoria();
+    }
+
+    void AtualizarOrganizacao()
+    {
+        atualizarInterface = true;
+        AtualizarLivros();
+        AtualizarPosicoes();
+    }
+
+    public string PegarLivroSelecionado()
+    {
+        return livroSelecionado;
     }
 
     void VerificarVitoria()
     {
-        if (ordemCorreta.Length != 5)
+        if (ordemCorreta.Length != livrosNasPosicoes.Length)
         {
             return;
         }
 
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < livrosNasPosicoes.Length; i++)
         {
-            if (livrosNasPosicoes[i] != ordemCorreta[i])
+            if (string.IsNullOrEmpty(livrosNasPosicoes[i]) || livrosNasPosicoes[i] != ordemCorreta[i])
             {
                 return;
             }
         }
 
         puzzleConcluido = true;
-
-        Debug.Log("PUZZLE CONCLUIDO!");
-
         if (mensagemConclusao != null)
         {
             mensagemConclusao.SetActive(true);
         }
 
-        gameObject.SetActive(false);
-    }
-
-    public string PegarLivroSelecionado()
-    {
-        return livroSelecionado;
+        if (areaOrganizacao != null)
+        {
+            areaOrganizacao.FecharPainel();
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
     }
 }

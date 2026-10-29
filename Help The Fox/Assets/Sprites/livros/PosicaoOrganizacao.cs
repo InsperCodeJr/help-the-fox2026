@@ -1,64 +1,59 @@
-using UnityEngine;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class PosicaoOrganizacao : MonoBehaviour
 {
     public int numeroPosicao;
     public TMP_Text textoPosicao;
 
-    private RectTransform rectTransform;
+    private InterfaceOrganizacao interfaceOrganizacao;
+    private RectTransform retangulo;
+    private Image fundo;
+    private VisualLivroOrganizacao visual;
+    private Color corVazia;
+    private Camera cameraInterface;
 
-    void Start()
+    public void Inicializar(InterfaceOrganizacao organizacao)
     {
-        rectTransform = GetComponent<RectTransform>();
+        if (visual != null)
+        {
+            return;
+        }
+
+        interfaceOrganizacao = organizacao;
+        retangulo = GetComponent<RectTransform>();
+        fundo = GetComponent<Image>();
+        corVazia = fundo.color;
+        visual = new VisualLivroOrganizacao(retangulo, textoPosicao);
+        Canvas canvas = GetComponentInParent<Canvas>().rootCanvas;
+        cameraInterface = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
     }
 
     void Update()
     {
-        Vector2 posicaoMouse = Input.mousePosition;
-
-        bool mouseEmCima =
-            RectTransformUtility.RectangleContainsScreenPoint(
-                rectTransform,
-                posicaoMouse
-            );
-
-        if (mouseEmCima && Input.GetMouseButtonDown(0))
+        if (retangulo != null && Input.GetMouseButtonDown(0)
+            && RectTransformUtility.RectangleContainsScreenPoint(
+                retangulo, Input.mousePosition, cameraInterface))
         {
-            Debug.Log(
-                "CLIQUE DETECTADO NA POSICAO "
-                + numeroPosicao
-            );
-
-            InterfaceOrganizacao interfaceOrganizacao =
-                GetComponentInParent<InterfaceOrganizacao>();
-
-            if (interfaceOrganizacao == null)
-            {
-                Debug.LogError(
-                    "NAO ENCONTREI InterfaceOrganizacao NO PAI!"
-                );
-
-                return;
-            }
-
-            Debug.Log("InterfaceOrganizacao encontrada!");
-
-            interfaceOrganizacao.ColocarLivroNaPosicao(
-                numeroPosicao
-            );
+            interfaceOrganizacao.ColocarLivroNaPosicao(numeroPosicao);
         }
     }
 
-    public void AtualizarTexto(string idLivro)
+    public void ExibirLivro(string identificador, Sprite sprite)
     {
-        if (string.IsNullOrEmpty(idLivro))
+        bool vazio = string.IsNullOrEmpty(identificador);
+        if (vazio)
         {
+            visual.Ocultar();
             textoPosicao.text = numeroPosicao.ToString();
         }
         else
         {
-            textoPosicao.text = idLivro;
+            textoPosicao.text = identificador;
+            visual.Mostrar(identificador, sprite, retangulo.rect.size - new Vector2(12f, 8f), 24f);
         }
+
+        fundo.color = vazio ? corVazia : Color.clear;
     }
 }
